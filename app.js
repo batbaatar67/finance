@@ -8,7 +8,7 @@ var uiController = (function() {
     incomeList: ".income__list",
     expenseList: ".expenses__list"
   };
-
+  
   return {
     getInput: function() {
       return {
