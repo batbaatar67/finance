@@ -1,10 +1,29 @@
 // Дэлгэцтэй ажиллах контроллер
+var uiController=(function(){
+var x=100;
+  function add(y){
+  return x+y;
+}
+return {
+  publicAdd: function(a){
+console.log("Bolobsruulsan utga: "+add(a));
+  }
+}
 
+})();
       // Convert List to Array
       // Орлого зарлагын элементийг агуулсан html-ийг бэлтгэнэ.
       // Тэр HTML дотроо орлого зарлагын утгуудыг REPLACE ашиглаж өөрчилж
 
 // Санхүүтэй ажиллах контроллер
+
+var financeController=(function(){
+  
+})();
+var appController=(function(uiController,financeController){
+
+})(uiController,financeController);
+uiController.publicAdd(55);
   // private data
 
   // private data
