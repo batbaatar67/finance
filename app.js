@@ -1,14 +1,6 @@
 // Дэлгэцтэй ажиллах контроллер
 var uiController=(function(){
-var x=100;
-  function add(y){
-  return x+y;
-}
-return {
-  publicAdd: function(a){
-console.log("Bolobsruulsan utga: "+add(a));
-  }
-}
+
 
 })();
       // Convert List to Array
@@ -20,10 +12,9 @@ console.log("Bolobsruulsan utga: "+add(a));
 var financeController=(function(){
   
 })();
-var appController=(function(uiController,financeController){
 
-})(uiController,financeController);
-uiController.publicAdd(55);
+
+
   // private data
 
   // private data
@@ -37,10 +28,31 @@ uiController.publicAdd(55);
       // Орлого зарлагын хувийг тооцоолно
 
 // Програмын холбогч контроллер
-    // 1. Оруулах өгөгдлийг дэлгэцээс олж авна.
+var appController=(function(uiController,financeController){
+  
+  document.addEventListener('keypress',function(event){
+  
+    if(event.keyCode===13||event.vhich===13){
+     ctrlAddItem() ;
+   } ;
+    
+  });
+  document.querySelector(".add__btn").addEventListener("click",function(){
+    ctrlAddItem();
+  });
+
+  var  ctrlAddItem=function(){
+  // 1. Оруулах өгөгдлийг дэлгэцээс олж авна.
+  console.log("ajilaj bn aaa")
       // 2. Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
       // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана
       // 4. Төсвийг тооцоолно
       // 5. Эцсийн үлдэгдэл,
+
+   };
+
+ })(uiController,financeController);
+  
+
 
       // 6. Төсвийн тооцоог дэлгэцэнд гаргана.
