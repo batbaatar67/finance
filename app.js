@@ -27,6 +27,52 @@ var uiController=(function(){
 
 var financeController=(function(){
   
+  var  Income=function(id,descr,value){
+    this.id=id;
+    this.descr=descr;
+    this.value=value;
+  };
+
+
+  var Expence=function(id,descr,value){
+    this.id=id;
+    this.descr=descr;
+    this.value=value;
+  };
+  
+
+var data={
+  items:{
+    inc:[],
+    exp:[]
+  },
+  totals:{
+    inc:0,
+    exp:0
+  }
+};
+
+return {addItem:function(type,descr,value){
+  var item,id;
+
+  if(data.items[type].length===0){
+    id=1;
+  } else {id=data.items[type][data.items[type].length-1].id+1;}
+
+  if (type==='inc'){item=new Income(id,descr,value);
+
+  } else {item=new Expence(id,descr,value);
+
+  }
+
+  data.items[type].push(item);
+
+},
+sendData:function(){
+  return data;
+}
+}
+
 })();
 
 
@@ -50,7 +96,8 @@ var appController=(function(uiController,financeController){
 
   var  ctrlAddItem=function(){
   // 1. Оруулах өгөгдлийг дэлгэцээс олж авна.
-  console.log( uiController.getInput());
+  var input = uiController.getInput();
+financeController.addItem(input.type,input.descr,input.value);
       // 2. Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
       // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана
       // 4. Төсвийг тооцоолно
