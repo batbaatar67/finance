@@ -4,20 +4,55 @@ var uiController=(function(){
     inputType:".add__type",
     inputDescr:".add__description",
     inputValue:".add__value",
-    addBtn:".add__btn"
+    addBtn:".add__btn",
+   incomList:  ".income__list",
+   expenseList:".expenses__list"
   };
   return {
     getInput:function(){
       return {
         type:document.querySelector(DOMstrings.inputType).value,
         descr:document.querySelector(DOMstrings.inputDescr).value,
-        value:document.querySelector(DOMstrings.inputValue).value
+        value:parseInt( document.querySelector(DOMstrings.inputValue).value)
       }
     },
     getDOMstrings:function(){
-      return DOMstrings;
+      return DOMstrings
+    },
+    clearFields:function(){
+var fields=document.querySelectorAll(
+  DOMstrings.inputDescr+","+DOMstrings.inputValue
+);
+var fieldsArr=Array.prototype.slice.call(fields);
+fields.forEach(function(el,index,Array){
+  el.value="";
+
+
+    });
+    fields[0].focus();
+    
+  },
+    addListItem: function(item, type) {
+      
+      var html, list;
+      if (type === "inc") {
+        list = DOMstrings.incomList;
+        html =
+          '<div class="item clearfix" id="income-%id%"><div class="item__description">$$DESCRIPTION$$</div><div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__delete">            <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div>        </div></div>';
+      } else {
+        list =DOMstrings.expenseList ;
+        html =
+          '<div class="item clearfix" id="expense-%id%"><div class="item__description">$$DESCRIPTION$$</div>          <div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn">                <i class="ion-ios-close-outline"></i></button></div></div></div>';
+      }
+     // html = html.replace("%id%", item.id);
+      html = html.replace("$$DESCRIPTION$$", item.descr);
+      html = html.replace("$$VALUE$$", item.value);
+
+      
+      document.querySelector(list).insertAdjacentHTML("beforeend", html);
     }
-  }
+  
+  };
 })();
       // Convert List to Array
       // Орлого зарлагын элементийг агуулсан html-ийг бэлтгэнэ.
@@ -67,6 +102,7 @@ return {addItem:function(type,descr,value){
 
   data.items[type].push(item);
 
+  return item;
 },
 sendData:function(){
   return data;
@@ -97,11 +133,23 @@ var appController=(function(uiController,financeController){
   var  ctrlAddItem=function(){
   // 1. Оруулах өгөгдлийг дэлгэцээс олж авна.
   var input = uiController.getInput();
-financeController.addItem(input.type,input.descr,input.value);
-      // 2. Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
-      // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана
-      // 4. Төсвийг тооцоолно
-      // 5. Эцсийн үлдэгдэл,
+if(input.descr!=="" && input.value>0 ){
+
+  var item = financeController.addItem(
+    input.type,
+    input.descr,
+    input.value);
+        // 2. Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
+   
+        // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана
+   
+  
+        uiController.addListItem(item, input.type);
+        uiController.clearFields();
+        // 4. Төсвийг тооцоолно
+        // 5. Эцсийн үлдэгдэл,
+  
+}
 
    };
 var setupEventListners=function(){
