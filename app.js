@@ -6,7 +6,11 @@ var uiController=(function(){
     inputValue:".add__value",
     addBtn:".add__btn",
    incomList:  ".income__list",
-   expenseList:".expenses__list"
+   expenseList:".expenses__list",
+   tusuvLabel:".budget__value",
+   incomeLabel:".budget__income--value",
+   expenseLabel:".budget__expenses--value",
+   procentageLabel:".budget__expenses--percentage"
   };
   return {
     getInput:function(){
@@ -32,6 +36,15 @@ fields.forEach(function(el,index,Array){
     fields[0].focus();
     
   },
+  tusuvYzuuleh:function(tusuv){
+    document.querySelector(DOMstrings.tusuvLabel).textContent=tusuv.tusuv;
+    document.querySelector(DOMstrings.incomeLabel).textContent=tusuv.inc;
+    document.querySelector(DOMstrings.expenseLabel).textContent=tusuv.exp;
+    document.querySelector(DOMstrings.procentageLabel).textContent=tusuv.xuvi;
+
+
+  },
+
     addListItem: function(item, type) {
       
       var html, list;
@@ -74,7 +87,6 @@ var financeController=(function(){
     this.descr=descr;
     this.value=value;
   };
-  
 
 var data={
   items:{
@@ -83,9 +95,25 @@ var data={
   },
   totals:{
     inc:0,
-    exp:0
+    exp:0,
+    tusuv:0,
+    xuvi:0
+
   }
 };
+
+var calculateTotal=function(type){
+  
+    var sum=0
+    data.items[type].forEach(function(el){
+      sum=sum+el.value;
+    })
+    data.totals[type]=sum;
+  
+};  
+// Нийт орлогын нийлбэрийг тооцоолно
+
+
 
 return {addItem:function(type,descr,value){
   var item,id;
@@ -104,6 +132,23 @@ return {addItem:function(type,descr,value){
 
   return item;
 },
+
+ tusuvBodoh:function(){
+  calculateTotal('inc');
+  // Нийт зарлагын нийлбэрийг тооцоолно
+    calculateTotal('exp');
+  // Төсвийг шинээр тооцоолно
+  data.totals.tusuv=data.totals.inc-data.totals.exp;
+  
+  // Орлого зарлагын хувийг тооцоолно
+  data.totals.xuvi=Math.round( data.totals.exp/data.totals.inc*100);
+  
+},
+
+tusuvAvah:function(){
+  return data.totals
+},
+
 sendData:function(){
   return data;
 }
@@ -118,13 +163,7 @@ sendData:function(){
   // private data
 
   // private data
-      // Нийт орлогын нийлбэрийг тооцоолно
-
-      // Нийт зарлагын нийлбэрийг тооцоолно
-
-      // Төсвийг шинээр тооцоолно
-      // Орлого зарлагын хувийг тооцоолно
-
+      
 // Програмын холбогч контроллер
 var appController=(function(uiController,financeController){
  
@@ -135,20 +174,25 @@ var appController=(function(uiController,financeController){
   var input = uiController.getInput();
 if(input.descr!=="" && input.value>0 ){
 
-  var item = financeController.addItem(
-    input.type,
-    input.descr,
-    input.value);
+ 
         // 2. Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
-   
+        var item = financeController.addItem(
+          input.type,
+          input.descr,
+          input.value);
         // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана
    
   
         uiController.addListItem(item, input.type);
         uiController.clearFields();
         // 4. Төсвийг тооцоолно
+       financeController.tusuvBodoh();
         // 5. Эцсийн үлдэгдэл,
-  
+          financeController.tusuvAvah();
+        //6. Delgezend haruulna
+       var tusuv=financeController.tusuvAvah();
+uiController.tusuvYzuuleh(tusuv);
+
 }
 
    };
