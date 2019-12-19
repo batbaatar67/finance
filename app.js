@@ -10,7 +10,8 @@ var uiController=(function(){
    tusuvLabel:".budget__value",
    incomeLabel:".budget__income--value",
    expenseLabel:".budget__expenses--value",
-   procentageLabel:".budget__expenses--percentage"
+   procentageLabel:".budget__expenses--percentage",
+   containerDiv:".container"
   };
   return {
     getInput:function(){
@@ -44,22 +45,26 @@ fields.forEach(function(el,index,Array){
 
 
   },
-
+    deleteListItem: function(id){
+        var el=document.getElementById(id);
+        el.parentNode.removeChild(el);
+    },
     addListItem: function(item, type) {
       
       var html, list;
       if (type === "inc") {
         list = DOMstrings.incomList;
         html =
-          '<div class="item clearfix" id="income-%id%"><div class="item__description">$$DESCRIPTION$$</div><div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__delete">            <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div>        </div></div>';
+          '<div class="item clearfix" id="inc-%id%"><div class="item__description">$$DESCRIPTION$$</div><div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__delete">            <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div>        </div></div>';
       } else {
         list =DOMstrings.expenseList ;
         html =
-          '<div class="item clearfix" id="expense-%id%"><div class="item__description">$$DESCRIPTION$$</div>          <div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn">                <i class="ion-ios-close-outline"></i></button></div></div></div>';
+          '<div class="item clearfix" id="exp-%id%"><div class="item__description">$$DESCRIPTION$$</div>          <div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn">                <i class="ion-ios-close-outline"></i></button></div></div></div>';
       }
      // html = html.replace("%id%", item.id);
       html = html.replace("$$DESCRIPTION$$", item.descr);
       html = html.replace("$$VALUE$$", item.value);
+      html = html.replace("%id%", item.id);
 
       
       document.querySelector(list).insertAdjacentHTML("beforeend", html);
@@ -144,6 +149,19 @@ return {addItem:function(type,descr,value){
   data.totals.xuvi=Math.round( data.totals.exp/data.totals.inc*100);
   
 },
+deleteItem:function(type,id){
+
+  var ids=data.items[type].map(function(el){
+  return el.id;
+});
+
+var index=ids.indexOf(id);
+if(index>-1){
+  data.items[type].splice(index,1);
+
+}
+
+},
 
 tusuvAvah:function(){
   return data.totals
@@ -185,17 +203,26 @@ if(input.descr!=="" && input.value>0 ){
   
         uiController.addListItem(item, input.type);
         uiController.clearFields();
-        // 4. Төсвийг тооцоолно
-       financeController.tusuvBodoh();
-        // 5. Эцсийн үлдэгдэл,
-          financeController.tusuvAvah();
-        //6. Delgezend haruulna
-       var tusuv=financeController.tusuvAvah();
-uiController.tusuvYzuuleh(tusuv);
+       
+        
+        updateTusuv();
+
 
 }
 
+
+
    };
+   var  updateTusuv=function(){
+    // 4. Төсвийг тооцоолно
+financeController.tusuvBodoh();
+// 5. Эцсийн үлдэгдэл,
+  financeController.tusuvAvah();
+//6. Delgezend haruulna
+var tusuv=financeController.tusuvAvah();
+uiController.tusuvYzuuleh(tusuv);
+ } ;
+
 var setupEventListners=function(){
   var DOM=uiController.getDOMstrings();
 
@@ -209,6 +236,22 @@ var setupEventListners=function(){
 
   document.querySelector(DOM.addBtn).addEventListener("click",function(){
     ctrlAddItem();
+  });
+
+
+  document.querySelector(DOM.containerDiv).addEventListener("click",function(event){
+    var id=event.target.parentNode.parentNode.parentNode.parentNode.id;
+    if(id){
+console.log(" id: "+id);
+      var arr=id.split("-");
+      var type=arr[0];
+      var itemId=parseInt(arr[1]);
+    console.log(type + "  --- > "+ itemId);
+      financeController.deleteItem(type,itemId);
+      uiController.deleteListItem(id);
+      updateTusuv();
+    };
+
   });
   
 }
